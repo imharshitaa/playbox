@@ -3,7 +3,7 @@
 ⚠️ WARNING: This project is intentionally insecure. It is for learning, training, and testing only. Run inside an isolated VM or an offline Docker host. Do not expose these services to the internet or production networks.
 
 About: 
-"vuln-input" repo is a collection of simple, intentionally vulnerable applications and services.
+"playbox" repo is a collection of simple, intentionally vulnerable applications and services.
 They are grouped by domain (web, API, LLM, network, cloud) and packaged with Docker for easy setup.
 
 Repo Contents ->
