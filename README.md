@@ -1,141 +1,43 @@
-# Vulnerable Lab Environment
+# Playbox Vulnerable Lab Environment
 
-⚠️ WARNING: This project is intentionally insecure. It is for learning, training, and testing only. Run inside an isolated VM or an offline Docker host. Do not expose these services to the internet or production networks.
+WARNING: WARNING: This project is intentionally insecure. It is for learning, training, and testing only. Run inside an isolated VM or an offline Docker host. Do not expose these services to the internet or production networks.
 
-About:
-"playbox" repo is a collection of simple, intentionally vulnerable applications and services.
-They are grouped by domain (web, API, AI, network, cloud) and packaged with Docker for easy setup.
+## What This Is
+Playbox is a collection of deliberately vulnerable mini-services grouped by domain. Each domain exposes OWASP Top 10 (2021) style endpoints plus extra classic issues (SQLi, XSS, CORS, etc.). The goal is to provide a safe local playground for security testing, training, and tooling demos.
 
-Repo Contents ->
-- gateway/ → Nginx reverse proxy for unified lab URLs
-- vuln_webapp/ → Minimal Flask website (basic OWASP web issues)
-- vuln_api/ → Small REST API (SQLi, IDOR, weak auth)
-- vuln_ai/ → AI lab (LLM + agent behaviors)
-- vuln_network/ → TCP server + HTTP network lab endpoints
-- vuln_cloud/ → Cloud lab API + MinIO (insecure policy examples)
-- payloads → Placeholder payload file
-- docker-compose.yml → Starts all services
-- README.md → You are reading this
+## What You Get
+Domains and their lab surfaces:
+- Web app lab (Flask, HTML) with XSS, CSRF, path traversal, uploads, etc.
+- API lab (Flask, JSON) with SQLi, IDOR, weak auth, CORS, SSRF, etc.
+- AI lab (Flask) with LLM-style prompts and agent-style tool execution
+- Network lab (Flask + TCP) with unsafe length framing and HTTP wrappers
+- Cloud lab (Flask) with insecure policies, metadata SSRF, misconfig examples
+- Gateway (nginx) that routes unified paths: `/labs/web/`, `/labs/api/`, `/labs/ai/`, `/labs/network/`, `/labs/cloud/`
 
-Tech Used ->
-1. Python 3.11 with: - Flask (web + API + AI + network + cloud) - SQLite (web + API DB)
-2. MinIO (S3-like object storage)
-3. Docker & Docker Compose for setup
-4. Netcat (nc) or Python (for TCP client testing)
-
-Unified Gateway URLs (path-based on localhost):
+## Quick Start (Docker)
+```
+docker compose up --build -d
+```
+Gateway URLs (path-based):
 - http://localhost/labs/web/
 - http://localhost/labs/api/
 - http://localhost/labs/ai/
 - http://localhost/labs/network/
 - http://localhost/labs/cloud/
 
-Tip: to use `http://playbox/...` locally, add `127.0.0.1 playbox` to your hosts file.
+If you want `http://playbox/...`, add `127.0.0.1 playbox` to your hosts file.
 
-Service Ports (direct access):
-- web: 8000
-- api: 5000
-- ai: 8080
-- network tcp: 9001
-- network http: 9101
-- cloud app: 9100
-- minio: 9000
-
-SETUP
--
-
-Quick start:
-
-- build and start everything
-`docker compose up --build -d`
-
-- check running containers
-`docker compose ps`
-
-- stop all
-`docker compose down`
-
-OWASP Top 10 (2021) Lab Endpoints
--
-Each lab has endpoints for the OWASP Top 10 (2021) categories plus a few extras.
-Examples:
-- Web SQLi: http://localhost/labs/web/sqli
-- Web CORS: http://localhost/labs/web/cors
-- API SQLi: http://localhost/labs/api/sqli
-- AI prompt injection: http://localhost/labs/ai/prompt-injection
-- Network unsafe length: http://localhost/labs/network/unsafe-length
-- Cloud metadata SSRF: http://localhost/labs/cloud/metadata
-
-Domain-based Setup (optional):
-
-1. WEB
-```
-cd vuln_webapp
-docker build -t vuln-web .
-docker run -d --rm -p 8000:8000 --name vuln-web vuln-web
-docker stop vuln-web
-```
-
-2. API
-```
-cd vuln_api
-docker build -t vuln-api .
-docker run -d --rm -p 5000:5000 --name vuln-api vuln-api
-docker stop vuln-api
-```
-
-3. AI
-```
-cd vuln_ai
-docker build -t vuln-ai .
-docker run -d --rm -p 8080:8080 --name vuln-ai vuln-ai
-docker stop vuln-ai
-```
-
-4. CLOUD
-```
-cd vuln_cloud
-docker build -t vuln-cloud .
-docker run -d --rm -p 9100:9100 --name vuln-cloud vuln-cloud
-# MinIO separately via docker compose
-cd ..
-docker compose up -d minio
-```
-
-5. NETWORK
-```
-cd vuln_network
-docker build -t vuln-network .
-docker run -d --rm -p 9001:9001 -p 9101:9101 --name vuln-network vuln-network
-docker stop vuln-network
-```
-
-TIPS:
-
-- run from repo root to start all at once
-`docker compose up --build -d`
-
-- use to see running containers
-`docker ps`
-
-- use to view logs
-`docker logs <container-name>`
-
-- stop everything
-`docker compose down`
-
-- port conflicts: change left side of mapping in docker-compose file
-(18080:8080)
-
-
-Local (No Docker) Run
--
-
+## Local Run (No Docker)
 Prereqs:
-- Python 3 (system python works)
-- pip packages: flask, requests
+- Python 3
+- pip packages: `flask`, `requests`
 
-Quick start:
+Install deps:
+```
+pip install -r requirements.txt
+```
+
+Start services:
 ```
 ./run_local.sh
 ```
@@ -147,7 +49,49 @@ Optional local gateway (path-based /labs/... on one port):
 Gateway runs at: http://localhost:8081
 
 Notes:
-- The local gateway is a minimal Python reverse proxy. For the full nginx gateway,
-  use Docker (`docker compose up --build -d`).
+- The local gateway is a minimal Python reverse proxy. For the full nginx gateway, use Docker.
 - Each service still runs on its own port locally.
 
+## Direct Ports (Local Access)
+- Web: http://localhost:8000
+- API: http://localhost:5000
+- AI: http://localhost:8080
+- Network HTTP: http://localhost:9101
+- Network TCP: localhost:9001
+- Cloud App: http://localhost:9100
+- MinIO: http://localhost:9000
+
+## OWASP Top 10 (2021) Endpoint Pattern
+Every domain exposes endpoints for:
+- A01: Broken Access Control
+- A02: Cryptographic Failures
+- A03: Injection
+- A04: Insecure Design
+- A05: Security Misconfiguration
+- A06: Vulnerable and Outdated Components
+- A07: Identification and Authentication Failures
+- A08: Software and Data Integrity Failures
+- A09: Security Logging and Monitoring Failures
+- A10: Server-Side Request Forgery (SSRF)
+
+Examples:
+- Web SQLi: http://localhost/labs/web/sqli
+- Web CORS: http://localhost/labs/web/cors
+- API SQLi: http://localhost/labs/api/sqli
+- AI prompt injection: http://localhost/labs/ai/prompt-injection
+- Network unsafe length: http://localhost/labs/network/unsafe-length
+- Cloud metadata SSRF: http://localhost/labs/cloud/metadata
+
+## Repo Layout
+- gateway/ -> Nginx reverse proxy for unified lab URLs
+- vuln_webapp/ -> Web app lab
+- vuln_api/ -> API lab
+- vuln_ai/ -> AI lab (LLM + agent behaviors)
+- vuln_network/ -> TCP server + HTTP network lab endpoints
+- vuln_cloud/ -> Cloud lab API + MinIO
+- run_local.sh -> Local runner for all services
+- run_gateway_local.py -> Local reverse proxy gateway
+- requirements.txt -> Local Python dependencies
+
+## Security Notice
+This repository is intentionally vulnerable. Use only in isolated environments. Do not expose it to any public network or production system.
