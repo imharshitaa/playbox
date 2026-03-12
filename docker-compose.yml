@@ -1,18 +1,49 @@
 version: "3.8"
 services:
+  gateway:
+    build: ./gateway
+    ports:
+      - "80:80"
+    depends_on:
+      - web
+      - api
+      - ai
+      - network_http
+      - cloud_app
+
   web:
-    build: ./web
+    build: ./vuln_webapp
     ports:
       - "8000:8000"
+
   api:
-    build: ./apis
+    build: ./vuln_api
     ports:
       - "5000:5000"
-  llm:
-    build: ./llm
+
+  ai:
+    build: ./vuln_ai
     ports:
       - "8080:8080"
-  tcp:
-    build: ./network
+
+  network_http:
+    build: ./vuln_network
     ports:
       - "9001:9001"
+      - "9101:9101"
+
+  cloud_app:
+    build: ./vuln_cloud
+    ports:
+      - "9100:9100"
+
+  minio:
+    image: minio/minio:latest
+    command: server /data
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./vuln_cloud/data:/data

@@ -2,41 +2,51 @@
 
 ⚠️ WARNING: This project is intentionally insecure. It is for learning, training, and testing only. Run inside an isolated VM or an offline Docker host. Do not expose these services to the internet or production networks.
 
-About: 
+About:
 "playbox" repo is a collection of simple, intentionally vulnerable applications and services.
-They are grouped by domain (web, API, LLM, network, cloud) and packaged with Docker for easy setup.
+They are grouped by domain (web, API, AI, network, cloud) and packaged with Docker for easy setup.
 
 Repo Contents ->
-- web/ → Minimal Flask website (basic OWASP web issues).
-- apis/ → Small REST API (SQLi, IDOR, weak auth).
-- llm/ → Mock LLM service (prompt injection playground).
-- network/ → Tiny TCP server (unsafe message framing).
-- cloud/ → MinIO service with an insecure policy (study-only).
-- payloads/ → Example payload files (just text/json snippets).
-- docker-compose.yml → Starts the main services (web, api, llm, tcp).
-- README.md → You are reading this.
+- gateway/ → Nginx reverse proxy for unified lab URLs
+- vuln_webapp/ → Minimal Flask website (basic OWASP web issues)
+- vuln_api/ → Small REST API (SQLi, IDOR, weak auth)
+- vuln_ai/ → AI lab (LLM + agent behaviors)
+- vuln_network/ → TCP server + HTTP network lab endpoints
+- vuln_cloud/ → Cloud lab API + MinIO (insecure policy examples)
+- payloads → Placeholder payload file
+- docker-compose.yml → Starts all services
+- README.md → You are reading this
 
 Tech Used ->
-1. Python 3.11 with: - Flask (web + API) - FastAPI + Uvicorn (LLM) - SQLite (API DB)
+1. Python 3.11 with: - Flask (web + API + AI + network + cloud) - SQLite (web + API DB)
 2. MinIO (S3-like object storage)
 3. Docker & Docker Compose for setup
 4. Netcat (nc) or Python (for TCP client testing)
 
-| Service | Domain   | Port | URL / Address                                  |
-| ------- | -------- | ---- | ---------------------------------------------- |
-| `web`   | Website  | 8000 | [http://localhost:8000](http://localhost:8000) |
-| `api`   | REST API | 5000 | [http://localhost:5000](http://localhost:5000) |
-| `llm`   | Mock LLM | 8080 | [http://localhost:8080](http://localhost:8080) |
-| `tcp`   | Network  | 9001 | tcp\://localhost:9001                          |
-| `cloud` | MinIO    | 9000 | [http://localhost:9000](http://localhost:9000) |
+Unified Gateway URLs (path-based on localhost):
+- http://localhost/labs/web/
+- http://localhost/labs/api/
+- http://localhost/labs/ai/
+- http://localhost/labs/network/
+- http://localhost/labs/cloud/
 
+Tip: to use `http://playbox/...` locally, add `127.0.0.1 playbox` to your hosts file.
+
+Service Ports (direct access):
+- web: 8000
+- api: 5000
+- ai: 8080
+- network tcp: 9001
+- network http: 9101
+- cloud app: 9100
+- minio: 9000
 
 SETUP
 -
 
 Quick start:
 
-- build and start everything (web, api, llm, tcp)
+- build and start everything
 `docker compose up --build -d`
 
 - check running containers
@@ -45,45 +55,59 @@ Quick start:
 - stop all
 `docker compose down`
 
-## Domain based Setup:
+OWASP Top 10 (2021) Lab Endpoints
+-
+Each lab has endpoints for the OWASP Top 10 (2021) categories plus a few extras.
+Examples:
+- Web SQLi: http://localhost/labs/web/sqli
+- Web CORS: http://localhost/labs/web/cors
+- API SQLi: http://localhost/labs/api/sqli
+- AI prompt injection: http://localhost/labs/ai/prompt-injection
+- Network unsafe length: http://localhost/labs/network/unsafe-length
+- Cloud metadata SSRF: http://localhost/labs/cloud/metadata
+
+Domain-based Setup (optional):
 
 1. WEB
 ```
-cd web
+cd vuln_webapp
 docker build -t vuln-web .
 docker run -d --rm -p 8000:8000 --name vuln-web vuln-web
 docker stop vuln-web
 ```
+
 2. API
 ```
-cd apis
+cd vuln_api
 docker build -t vuln-api .
 docker run -d --rm -p 5000:5000 --name vuln-api vuln-api
 docker stop vuln-api
 ```
-3. LLM
+
+3. AI
 ```
-cd llm
-docker build -t vuln-llm .
-docker run -d --rm -p 8080:8080 --name vuln-llm vuln-llm
-docker stop vuln-llm
+cd vuln_ai
+docker build -t vuln-ai .
+docker run -d --rm -p 8080:8080 --name vuln-ai vuln-ai
+docker stop vuln-ai
 ```
+
 4. CLOUD
 ```
-cd cloud
-docker compose up -d
-docker compose down
+cd vuln_cloud
+docker build -t vuln-cloud .
+docker run -d --rm -p 9100:9100 --name vuln-cloud vuln-cloud
+# MinIO separately via docker compose
+cd ..
+docker compose up -d minio
 ```
-- Web console: http://localhost:9000
-- Default user: minioadmin
-- Default password: minioadmin
 
 5. NETWORK
 ```
-cd network
-docker build -t vuln-tcp .
-docker run -d --rm -p 9001:9001 --name vuln-tcp vuln-tcp
-docker stop vuln-tcp
+cd vuln_network
+docker build -t vuln-network .
+docker run -d --rm -p 9001:9001 -p 9101:9101 --name vuln-network vuln-network
+docker stop vuln-network
 ```
 
 TIPS:
@@ -101,35 +125,4 @@ TIPS:
 `docker compose down`
 
 - port conflicts: change left side of mapping in docker-compose file
-(18000:8000)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(18080:8080)

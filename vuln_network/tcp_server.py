@@ -2,8 +2,9 @@
 import socket
 import struct
 
-HOST='0.0.0.0'
-PORT=9001
+HOST = '0.0.0.0'
+PORT = 9001
+
 
 def handle(conn):
     try:
@@ -20,12 +21,17 @@ def handle(conn):
     finally:
         conn.close()
 
-if __name__ == "__main__":
-    s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+
+def start_tcp_server(host=HOST, port=PORT):
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    s.bind((HOST,PORT))
+    s.bind((host, port))
     s.listen(5)
-    print("listening on", PORT)
+    print("listening on", port)
     while True:
-        conn,addr = s.accept()
+        conn, addr = s.accept()
         handle(conn)
+
+
+if __name__ == "__main__":
+    start_tcp_server()
