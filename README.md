@@ -126,3 +126,28 @@ TIPS:
 
 - port conflicts: change left side of mapping in docker-compose file
 (18080:8080)
+
+
+Local (No Docker) Run
+-
+
+Prereqs:
+- Python 3 (system python works)
+- pip packages: flask, requests
+
+Quick start:
+```
+./run_local.sh
+```
+
+Optional local gateway (path-based /labs/... on one port):
+```
+./run_gateway_local.py
+```
+Gateway runs at: http://localhost:8081
+
+Notes:
+- The local gateway is a minimal Python reverse proxy. For the full nginx gateway,
+  use Docker (`docker compose up --build -d`).
+- Each service still runs on its own port locally.
+
