@@ -3,8 +3,9 @@ import http.server
 import socketserver
 import urllib.request
 import urllib.error
+import os
 
-PORT = 8081
+PORT = int(os.getenv("PORT", "8081"))
 
 ROUTES = {
     "/labs/web/": "http://localhost:8000/",
@@ -35,11 +36,18 @@ class Proxy(http.server.BaseHTTPRequestHandler):
                 target = base + self.path[len(prefix):]
                 break
 
+        if self.path == "/labs/" or self.path == "/labs":
+            self.send_response(200)
+            self.send_header("Content-Type", "text/plain")
+            self.end_headers()
+            self.wfile.write(b"Playbox Vulnerable Labs\nWARNING: This site is intentionally insecure. Training and educational use only.\nUse /labs/web/, /labs/api/, /labs/ai/, /labs/network/, /labs/cloud/\n")
+            return
+
         if not target:
             self.send_response(200)
             self.send_header("Content-Type", "text/plain")
             self.end_headers()
-            self.wfile.write(b"Playbox local gateway. Use /labs/web/, /labs/api/, /labs/ai/, /labs/network/, /labs/cloud/\n")
+            self.wfile.write(b"Playbox Vulnerable Labs\nWARNING: This site is intentionally insecure. Training and educational use only.\nUse /labs/web/, /labs/api/, /labs/ai/, /labs/network/, /labs/cloud/\n")
             return
 
         length = int(self.headers.get("Content-Length", "0"))
@@ -71,6 +79,6 @@ class Proxy(http.server.BaseHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    with socketserver.TCPServer(("", PORT), Proxy) as httpd:
-        print(f"Playbox local gateway running on http://localhost:{PORT}")
+    with socketserver.TCPServer(("0.0.0.0", PORT), Proxy) as httpd:
+        print(f"Playbox local gateway running on http://0.0.0.0:{PORT}")
         httpd.serve_forever()

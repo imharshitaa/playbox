@@ -33,7 +33,9 @@ def labs_network_index():
         "tcp-info",
         "cors",
     ]
-    return jsonify(list_links("/labs/network/", items))
+    payload = list_links("/labs/network/", items)
+    payload["disclaimer"] = "WARNING: This site is intentionally insecure. Training and educational use only."
+    return jsonify(payload)
 
 
 @app.route("/labs/network/tcp-info")

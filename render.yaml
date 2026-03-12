@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: playbox
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile.render
+    autoDeploy: true
+    envVars:
+      - key: ALLOW_EXEC
+        value: "0"

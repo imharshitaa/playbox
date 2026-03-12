@@ -121,7 +121,7 @@ def labs_web_index():
         "file-upload",
         "open-redirect",
     ]
-    return "<h1>Web Labs</h1>" + list_links("/labs/web/", items)
+    return "<h1>Playbox Vulnerable Labs</h1><p>WARNING: This site is intentionally insecure. Training and educational use only.</p>" + list_links("/labs/web/", items)
 
 
 @app.route("/labs/web/a01-broken-access-control")

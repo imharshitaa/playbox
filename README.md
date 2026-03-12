@@ -1,6 +1,6 @@
 # Playbox Vulnerable Lab Environment
 
-WARNING: WARNING: This project is intentionally insecure. It is for learning, training, and testing only. Run inside an isolated VM or an offline Docker host. Do not expose these services to the internet or production networks.
+WARNING: This project is intentionally insecure. It is for learning, training, and testing only. Run inside an isolated VM or an offline Docker host. Do not expose these services to the internet or production networks.
 
 ## What This Is
 Playbox is a collection of deliberately vulnerable mini-services grouped by domain. Each domain exposes OWASP Top 10 (2021) style endpoints plus extra classic issues (SQLi, XSS, CORS, etc.). The goal is to provide a safe local playground for security testing, training, and tooling demos.
@@ -95,3 +95,11 @@ Examples:
 
 ## Security Notice
 This repository is intentionally vulnerable. Use only in isolated environments. Do not expose it to any public network or production system.
+
+## Hosted Demo (Render Free)
+This repo includes a Render Blueprint that deploys a single public service which runs all labs behind a gateway. After you deploy, you'll get a URL like: [https://playbox.onrender.com/labs/](https://playbox.onrender.com/labs/)
+
+Steps: create a free Render account, click "New" -> "Blueprint" and connect this repo, Render will read `render.yaml` and build the service, then open your public URL and access `/labs/web/`, `/labs/api/`, `/labs/ai/`, `/labs/network/`, `/labs/cloud/`.
+
+Notes: free Render instances sleep when idle and may take time to wake. Set the Render service name to `playbox` to get `https://playbox.onrender.com/`. Update the README link after your deployment to point to your real Render URL. The gateway shows a safety disclaimer at `/` and `/labs/`.
+

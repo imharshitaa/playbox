@@ -30,7 +30,9 @@ def labs_cloud_index():
         "metadata",
         "cors",
     ]
-    return jsonify(list_links("/labs/cloud/", items))
+    payload = list_links("/labs/cloud/", items)
+    payload["disclaimer"] = "WARNING: This site is intentionally insecure. Training and educational use only."
+    return jsonify(payload)
 
 
 @app.route("/labs/cloud/a01-broken-access-control")

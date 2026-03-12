@@ -47,7 +47,9 @@ def labs_ai_index():
         "generate",
         "cors",
     ]
-    return jsonify(list_links("/labs/ai/", items))
+    payload = list_links("/labs/ai/", items)
+    payload["disclaimer"] = "WARNING: This site is intentionally insecure. Training and educational use only."
+    return jsonify(payload)
 
 
 # LLM-style generation endpoint

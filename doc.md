@@ -56,3 +56,10 @@ Add endpoints in each domain under `/labs/<domain>/...`. Keep behavior intention
 
 ## Disclaimer
 This project is intentionally insecure. Do not deploy to any public or production network. Always use isolated environments for testing.
+
+
+## Render Deployment (Free)
+The repo includes `render.yaml` and `Dockerfile.render` to deploy all labs as a single Render web service. The container starts all services and exposes a single public gateway (Render provides a free subdomain).
+
+Flow: Render builds the Docker image, runs `render_start.sh`, which starts all lab services and then runs the gateway on the Render `PORT`. You access everything at `https://<your-service>.onrender.com/labs/`.
+

@@ -103,7 +103,7 @@ def labs_api_index():
         "cors",
         "idor",
     ]
-    return jsonify({"endpoints": ["/labs/api/" + i for i in items]})
+    return jsonify({"disclaimer": "WARNING: This site is intentionally insecure. Training and educational use only.", "endpoints": ["/labs/api/" + i for i in items]})
 
 
 @app.route("/labs/api/a01-broken-access-control")
